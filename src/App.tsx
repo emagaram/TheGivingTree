@@ -1,26 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react"
+import logo from "./logo.svg"
+import { BrowserRouter, Switch, Route } from "react-router-dom"
+import Navbar from "./components/layout/Navbar"
+import DashboardPage from "./components/dashboard/DashboardPage"
+import SignInPage from "./components/auth/SignInPage"
+import SignUpPage from "./components/auth/SignUpPage"
+import firebase from "./config/firebase"
+import DonatePage from "./components/dashboard/DonatePage"
 
 function App() {
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <BrowserRouter>
+      <div className="App">
+        <Navbar />
+        <Switch>
+          <Route exact path="/" component={DashboardPage}></Route>
+          <Route path="/signin" component={SignInPage}></Route>
+          <Route path="/signup" component={SignUpPage}></Route>
+          <Route path="/donate" component={DonatePage}></Route>
+
+        </Switch>
+      </div>
+    </BrowserRouter>
+  )
 }
 
-export default App;
+export default App
