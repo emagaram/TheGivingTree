@@ -9,7 +9,7 @@ import firebase from "./config/firebase"
 import DonatePage from "./components/dashboard/DonatePage"
 
 function App() {
-
+  let donorNum: number = 4;
   return (
     <BrowserRouter>
       <div className="App">
@@ -18,7 +18,8 @@ function App() {
           <Route exact path="/" component={DashboardPage}></Route>
           <Route path="/signin" component={SignInPage}></Route>
           <Route path="/signup" component={SignUpPage}></Route>
-          <Route path="/donate" component={DonatePage}></Route>
+          <Route path="/donate" render={() => <DonatePage donorNum={donorNum} />
+          } />
 
         </Switch>
       </div>

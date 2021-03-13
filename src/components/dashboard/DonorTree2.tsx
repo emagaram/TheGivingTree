@@ -6,16 +6,16 @@ import firebase from "../../config/firebase"
 interface Donation {
     amount: number,
     charity: string,
-    donor_id: string,
+    donor_id: number,
     memo?: string,
-    parent_id: string
+    parent_id: number
 }
 
 function useDonations() {
     const [donations, setDonations] = useState<Donation[]>([]);
 
     useEffect(() => {
-        firebase.firestore().collection("Donations").
+        const unsubscribe = firebase.firestore().collection("Donations").
             onSnapshot((snapshot) => {
                 const newDonations: Donation[] = snapshot.docs.map((doc) => ({
                     amount: doc.get('amount'),
@@ -26,6 +26,7 @@ function useDonations() {
                 }))
                 setDonations(newDonations);
             })
+        return () => unsubscribe();
     }, [])
     return donations;
 }
@@ -64,12 +65,12 @@ export default function DonorTree2() {
     // graph payload (with minimalist structure)
     const data: { nodes: { id: string }[], links: { source: string, target: string }[] } = {
         nodes: useDonations().map((donation) => ({
-            id: donation.donor_id,
+            id: donation.donor_id.toString(),
             //amount: donation.amount
         })),
-        links: useDonations().filter(donation => donation.parent_id !== "").map((donation) => ({
-            source: donation.donor_id,
-            target: donation.parent_id
+        links: useDonations().filter(donation => donation.parent_id !== 0).map((donation) => ({
+            source: donation.donor_id.toString(),
+            target: donation.parent_id.toString()
         }))
         /*[
             { source: "Harry", target: "Sally" },

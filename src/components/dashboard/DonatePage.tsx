@@ -1,16 +1,29 @@
 import React, { FormEvent, useState } from "react"
+import firebase from "../../config/firebase";
 
-
-function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    console.log(event);
+type DonorProps = {
+    donorNum: number
 }
 
-export default function DonatePage() {
+function DonatePage({ donorNum }: DonorProps) {
     const [charity, setCharity] = useState("");
     const [amount, setAmount] = useState(-1);
-    const [referral, setReferall] = useState("");
+    const [referral, setReferall] = useState(0);
+    function handleSubmit(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        console.log(donorNum + "hello");
 
+
+        //Date created and memo added
+        firebase.firestore().collection("Donations").add({
+            amount: amount,
+            charity: charity,
+            parent_id: referral,
+            donor_id: donorNum
+        });
+        donorNum++;
+
+    }
     return (
         <div className="container">
             <form onSubmit={handleSubmit} className="white">
@@ -32,7 +45,7 @@ export default function DonatePage() {
                 <div className="input-field">
                     <label htmlFor="referall">Referall</label>
                     <input type="text" id="referall" onChange={(e) => {
-                        setReferall(e.target.value)
+                        setReferall(parseInt(e.target.value, 10))
                         console.log(e.target.value);
                     }} />
                 </div>
@@ -45,3 +58,5 @@ export default function DonatePage() {
         </div>
     )
 }
+
+export default DonatePage
