@@ -1,6 +1,7 @@
 import firebase from "firebase/app"
 import "firebase/firestore"
 import "firebase/auth"
+require('firebase/auth')
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -14,7 +15,8 @@ var firebaseConfig = {
     measurementId: "G-MTWGYX0V1N"
 };
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+const app = firebase.initializeApp(firebaseConfig);
 //firebase.analytics();
-firebase.firestore().settings({ timestampsInSnapshots: true });
-export default firebase;
+firebase.firestore().settings(<any>{ timestampsInSnapshots: true });
+export const auth = app.auth()
+export default firebase

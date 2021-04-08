@@ -5,7 +5,8 @@ import Navbar from "./components/layout/Navbar"
 import DashboardPage from "./components/dashboard/DashboardPage"
 import SignInPage from "./components/auth/SignInPage"
 import SignUpPage from "./components/auth/SignUpPage"
-import firebase from "./config/firebase"
+import ForgotPasswordPage from "./components/auth/ForgotPasswordPage"
+import { AuthProvider } from "./components/contexts/AuthContext"
 import DonatePage from "./components/dashboard/DonatePage"
 
 function App() {
@@ -13,17 +14,22 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
-        <Navbar />
-        <Switch>
-          <Route exact path="/" component={DashboardPage}></Route>
-          <Route path="/signin" component={SignInPage}></Route>
-          <Route path="/signup" component={SignUpPage}></Route>
-          <Route path="/donate" render={() => <DonatePage donorNum={donorNum} />
-          } />
+        <AuthProvider>
+          <Navbar />
+          <Switch>
+            <Route exact path="/" component={DashboardPage}></Route>
+            <Route path="/signin" component={SignInPage}></Route>
+            <Route path="/signup" component={SignUpPage}></Route>
+            <Route path="/forgot-password" component={ForgotPasswordPage}></Route>
+            <Route path="/donate" render={() => <DonatePage donorNum={donorNum} />
+            } />
 
-        </Switch>
+          </Switch>
+        </AuthProvider>
+
       </div>
     </BrowserRouter>
+
   )
 }
 
