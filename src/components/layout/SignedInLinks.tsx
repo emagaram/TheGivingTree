@@ -19,7 +19,6 @@ const SignedInLinks = () => {
         <>
             { currentUser &&
                 <ul className="right">
-                    <li><NavLink to='/donate'>Donate</NavLink> </li>
                     <li><button onClick={handleSignout}>Log Out</button></li>
                     <li><NavLink to='/' className="btn btn-floating-pink lighten-1">Ezra</NavLink> </li>
                 </ul >

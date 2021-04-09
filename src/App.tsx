@@ -10,7 +10,6 @@ import { AuthProvider } from "./components/contexts/AuthContext"
 import DonatePage from "./components/dashboard/DonatePage"
 
 function App() {
-  let donorNum: number = 4;
   return (
     <BrowserRouter>
       <div className="App">
@@ -21,7 +20,7 @@ function App() {
             <Route path="/signin" component={SignInPage}></Route>
             <Route path="/signup" component={SignUpPage}></Route>
             <Route path="/forgot-password" component={ForgotPasswordPage}></Route>
-            <Route path="/donate" render={() => <DonatePage donorNum={donorNum} />
+            <Route path="/donate" render={() => <DonatePage />
             } />
 
           </Switch>

@@ -1,28 +1,84 @@
-import React, { FormEvent, useState } from "react"
+import React, { FormEvent, useEffect, useState } from "react"
 import firebase from "../../config/firebase";
 
-
-type DonorProps = {
-    donorNum: number
+interface Donation {
+    amount: number,
+    charity: string,
+    donor_id: number,
+    memo?: string,
+    parent_id: number,
+    layer: number,
 }
 
-function DonatePage({ donorNum }: DonorProps) {
+function DonatePage() {
     const [charity, setCharity] = useState("");
     const [amount, setAmount] = useState(-1);
     const [referral, setReferall] = useState(0);
-    function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    let donations: Donation[] = useDonations();
+    function useDonations() {
+        const [donations, setDonations] = useState<Donation[]>([]);
+
+        useEffect(() => {
+            const unsubscribe = firebase.firestore().collection("Donations").
+                onSnapshot((snapshot) => {
+                    const newDonations: Donation[] = snapshot.docs.map((doc) => ({
+                        amount: doc.get('amount'),
+                        charity: doc.get('charity'),
+                        donor_id: doc.get('donor_id'),
+                        memo: doc.get('memo'),
+                        parent_id: doc.get('parent_id'),
+                        layer: doc.get('layer')
+                    }))
+                    setDonations(newDonations);
+                })
+            return () => unsubscribe();
+        }, [])
+        return donations;
+    }
+    function findDonationLayer(id: number | undefined): number {
+        for (let i = 0; i < donations.length; i++) {
+            if (donations[i].donor_id === id) {
+                return donations[i].layer;
+            }
+        }
+        return 0;
+    }
+
+    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        console.log(donorNum + "hello");
 
+        let docRef = firebase.firestore().collection("DonationsCount").doc("count");
+        let count: number;
 
-        //Date created and memo added
-        firebase.firestore().collection("Donations").add({
-            amount: amount,
-            charity: charity,
-            parent_id: referral,
-            donor_id: donorNum
+        await docRef.get().then((doc) => {
+            if (doc.exists) {
+                let data: any = doc.data();
+                if (data.count !== null) {
+                    count = data.count;
+                }
+                console.log("Found document data:", data);
+            } else {
+                docRef.set({
+                    count: 0
+                })
+                console.log("No such document! Creating one");
+            }
+            //Date created and memo added
+            firebase.firestore().collection("Donations").add({
+                amount: amount,
+                charity: charity,
+                parent_id: referral,
+                donor_id: count,
+                layer: findDonationLayer(referral) + 1
+            });
+            docRef.set({
+                count: count + 1
+            })
+
+        }).catch((error) => {
+            console.log("Error getting document:", error);
         });
-        donorNum++;
+
 
     }
     return (

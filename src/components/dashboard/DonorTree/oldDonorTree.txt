@@ -1,0 +1,176 @@
+    /*
+    function checkInLayer(layer: number, donation: Donation): boolean {
+        for (let index = 0; index < donations.length; index++) {
+            if (numChildren[layer][index]?.donor_id === donation.donor_id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function findDonation(id: number | undefined): Donation | null {
+        for (let i = 0; i < donations.length; i++) {
+            if (donations[i].donor_id === id) {
+                return donations[i];
+            }
+        }
+        return null;
+    }
+
+
+
+    
+    let numChildren: (Donation | null)[][] = new Array(donations.length);
+    let count: number = 0;
+    let largestLayer: number = count;
+    for (let i = 0; i < donations.length; i++) {
+        numChildren[i] = new Array(donations.length);
+        let search = donations[i];
+        let found: boolean = false;
+        for (let j = 0; j < donations.length; j++) {
+            if (donations[j].parent_id === search.donor_id && j !== i) {
+                found = true;
+            }
+            numChildren[i][j] = null;
+        }
+        if (!found) {
+            numChildren[0][count] = search;
+            count++;
+        }
+        numItems[i] = 0;
+    }
+    numItems[0] = count;
+    largestLayer = count;
+    for (let layer = 1; layer < numChildren.length; layer++) {
+        count = 0;
+        for (let j = 0; j < numItems[layer - 1]; j++) {
+            let d = findDonation(numChildren[layer - 1][j]?.parent_id);
+            if (d != null && !checkInLayer(layer, d)) {
+                numChildren[layer][count] = d;
+                count++;
+            }
+        }
+        numItems[layer] = count;
+        if (count > largestLayer) {
+            largestLayer = count;
+        }
+    }
+
+    for (let layer = 0; layer < numChildren.length; layer++) {
+        if (numItems[layer] !== 0) {
+            for (let j = 0; j < numItems[layer]; j++) {
+                console.log(numChildren[layer][j]?.donor_id);
+            }
+            console.log("New layer")
+        }
+    }
+    */
+
+
+
+
+
+
+
+        // graph payload (with minimalist structure)
+    function findDonation(id: number | undefined): Donation | null {
+        for (let i = 0; i < donations.length; i++) {
+            if (donations[i].donor_id === id) {
+                console.log(donations[i].donor_id)
+                return donations[i];
+            }
+        }
+        return null;
+    }
+    let deepestLayer = 0;
+    let largestLayer = 0;
+    for (let i = 0; i < donations.length; i++) {
+        if (donations[i].layer > deepestLayer) {
+            deepestLayer = donations[i].layer;
+        }
+    }
+
+    let itemsPerLayer: number[] = new Array(deepestLayer + 1);
+    for (let i = 0; i < itemsPerLayer.length; i++) {
+        itemsPerLayer[i] = 0;
+    }
+    for (let i = 0; i < donations.length; i++) {
+        itemsPerLayer[donations[i].layer]++;
+    }
+    for (let i = 0; i < donations.length; i++) {
+        if (itemsPerLayer[i] > itemsPerLayer[largestLayer]) {
+            largestLayer = i;
+        }
+    }
+
+    let nodePositions: Coordinate[] = new Array(donations.length);
+    let baseLayerDonations: Donation[] = new Array(itemsPerLayer[deepestLayer - 1]);
+    let count: number = 0;
+    for (let i = 0; i < donations.length; i++) {
+        let x: Coordinate = { x: 200, y: 200 };
+        nodePositions[i] = x;
+        if (donations[i].layer === deepestLayer) {
+            baseLayerDonations[count] = donations[i];
+            count++;
+        }
+    }
+    baseLayerDonations = baseLayerDonations.sort((a: Donation, b: Donation) => {
+        if (a.parent_id < b.parent_id) {
+            return -1;
+        }
+        else if (a.parent_id > b.parent_id) {
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    })
+
+
+    let numPlaces = myConfig.width / baseLayerDonations.length;
+    let parentLocations: ParentPlacer[] = new Array(baseLayerDonations.length);
+    let currId: number = 0;
+    let parentLocInc = 0;
+    let avgInc = 0;
+    count = 0;
+    if (baseLayerDonations[0] != null) {
+        currId = baseLayerDonations[0].parent_id;
+    }
+    else {
+        //What to do if no base children? Will this ever occur?
+    }
+    for (let i = 0; i < baseLayerDonations.length; i++) {
+        let x: Coordinate = { x: numPlaces * i, y: myConfig.height - 50 };
+        count += numPlaces * i;
+        avgInc++;
+        if (baseLayerDonations[i + 1] != null && baseLayerDonations[i + 1].parent_id != currId) {
+            parentLocations[parentLocInc] = { id: currId, childAverage: count / avgInc };
+            count = 0;
+            avgInc = 0;
+            currId = baseLayerDonations[i + 1].parent_id;
+            parentLocInc++;
+        }
+        if (baseLayerDonations[i] != null) {
+            nodePositions[(baseLayerDonations[i].donor_id)] = x;
+        }
+    }
+
+    console.log("Parent placements");
+    console.log(parentLocations);
+
+    for (let layer = 1; layer < deepestLayer; layer++) {
+        count = 0;
+        for (let i = 0; i < donations.length; i++) {
+            if (donations[i].layer === deepestLayer - layer) {
+                baseLayerDonations[count] = donations[i];
+                count++;
+            }
+        }
+        baseLayerDonations = baseLayerDonations.sort(DonationComparison)
+        let numPlaces = myConfig.width / baseLayerDonations.length;
+
+        for (let i = 0; i < parentLocations.length; i++) {
+            nodePositions[parentLocations[i].id].x = parentLocations[i].childAverage;
+        }
+
+    }
