@@ -8,6 +8,7 @@ interface Donation {
     memo?: string,
     parent_id: number,
     layer: number,
+    display_name: string
 }
 
 function DonatePage() {
@@ -27,7 +28,8 @@ function DonatePage() {
                         donor_id: doc.get('donor_id'),
                         memo: doc.get('memo'),
                         parent_id: doc.get('parent_id'),
-                        layer: doc.get('layer')
+                        layer: doc.get('layer'),
+                        display_name: doc.get('display_name')
                     }))
                     setDonations(newDonations);
                 })
@@ -69,7 +71,8 @@ function DonatePage() {
                 charity: charity,
                 parent_id: referral,
                 donor_id: count,
-                layer: findDonationLayer(referral) + 1
+                layer: findDonationLayer(referral) + 1,
+                display_name: ""
             });
             docRef.set({
                 count: count + 1

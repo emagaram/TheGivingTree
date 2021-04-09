@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Graph } from "react-d3-graph";
-import { sortedTree, initialTest } from "./treespace"
+import { sortedTree } from "./treespace"
 
 import firebase from "../../../config/firebase"
 interface Donation {

@@ -573,25 +573,7 @@ function sortedTree(treeData) {
     return testTree.orderedNodes;
 }
 
-function initialTest() {
-    var testResponse = '{"Data":[{"parent":[],"rightSibling":null,"child":[1,2],"leftSibling":null,"ID":0},{"parent":[1],"rightSibling":null,"child":[],"leftSibling":null,"ID":3},{"parent":[0],"rightSibling":2,"child":[3],"leftSibling":null,"ID":1},{"parent":[0],"rightSibling":null,"child":[],"leftSibling":1,"ID":2}]} '
-    var response = JSON.parse(testResponse);
-    var testTree = new TreeSpace();
 
-    testTree.loadTreeNodes(response.Data);
-    console.log(testTree);
-    testTree.positionTree();
-    testTree.inOrderTree(testTree.nodes[0]);
-    // //testTree.collapse(testTree.nodes[5]);
-
-    for (var j = 0; j < testTree.nodes.length; j++) {
-        //console.log(testTree.orderedNodes[j].toString());
-    }
-
-}
-
-
-exports.initialTest = initialTest;
 exports.sortedTree = sortedTree;
 
 exports.TreeSpace = TreeSpace;
