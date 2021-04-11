@@ -42,8 +42,8 @@ function useDonations() {
                     charity: doc.get('charity'),
                     donor_id: doc.get('donor_id'),
                     memo: doc.get('memo'),
-                    parent_id: doc.get('parent_id'),
-                    layer: doc.get('layer'),
+                    parent_id: doc.get('parent_id'), //Set by Cloud function, user gives referral code
+                    layer: doc.get('layer'), //Set by Cloud function
                     rightSibling: null,
                     leftSibling: null,
                     children: []
