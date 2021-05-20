@@ -92,10 +92,9 @@ const onClickLink = function (source: string, target: string) {
     window.alert(`Clicked link between ${source} and ${target}`);
 };
 
-
 export default function DonorTree() {
     let donations = useDonations();
-    console.log(donations);
+    //console.log(donations);
     function findDonation(id: number): any {
         for (let i = 0; i < donations.length; i++) {
             if (donations[i].donor_id === id) {
@@ -150,15 +149,16 @@ export default function DonorTree() {
         itemsInLayer[i] = itemsInLayer[i].sort(DonationComparison);
         for (let p = 0; p < itemsInLayer[i].length; p++) {
             if (p !== 0) {
-                itemsInLayer[i][p].leftSibling = itemsInLayer[i][p - 1].donor_id;
+                if (itemsInLayer[i][p - 1].parent_id === itemsInLayer[i][p - 1].parent_id) {
+                    itemsInLayer[i][p].leftSibling = itemsInLayer[i][p - 1].donor_id;
+                }
             }
             if (p < itemsInLayer[i].length - 1) {
-                itemsInLayer[i][p].rightSibling = itemsInLayer[i][p + 1].donor_id;
+                if (itemsInLayer[i][p].parent_id === itemsInLayer[i][p + 1].parent_id) {
+                    itemsInLayer[i][p].rightSibling = itemsInLayer[i][p + 1].donor_id;
+                }
             }
-
         }
-
-
     }
 
     //console.log(donations);
@@ -174,11 +174,13 @@ export default function DonorTree() {
     if (treeData[foundIndex] != null && treeData[foundIndex].parent !== null) {
         treeData[foundIndex].parent.pop();
     }
+    console.log(treeData)
     let s = JSON.stringify(treeData);
     let nodeArray: any[] = [];
     s = '{"Data":' + s + "}";
     console.log(s);
     if (s.length > 20) {
+        //initialTest();
         nodeArray = sortedTree(s);
     }
     const data: { nodes: { id: string }[], links: { source: string, target: string }[] } = {

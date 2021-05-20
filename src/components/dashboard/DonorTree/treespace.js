@@ -34,7 +34,7 @@ var TreeSpace = function (rootX, rootY, collapsible) {
 
     this.config = {
         LEVEL_SEPARATION: 160,
-        NODE_SEPARATION: 40,
+        NODE_SEPARATION: 80,
         TREE_SEPARATION: 20,
         NODE_SIZE: 25,
         MAX_WIDTH: 25,
@@ -310,7 +310,7 @@ var TreeSpace = function (rootX, rootY, collapsible) {
 */
 
 TreeSpace.prototype.loadTreeNodes = function (results) {
-    var treeNodeObjects = results;
+    var treeNodeObjects = results.Data;
     var treeNodesMap = new Map();
     this.nodes.length = 0;
     this.orderedNodes.length = 0;
@@ -556,24 +556,70 @@ function checkExtentRange(x, y) {
     return true;
 }
 
+function initialTest() {
 
-function sortedTree(treeData) {
-    var testResponse = treeData;
-    var testTree = new TreeSpace();
-    var response = JSON.parse(testResponse);
-    testTree.loadTreeNodes(response.Data);
-    console.log(testTree);
+    let testResponse = '{"Result_text": "Successful Web Crawl", "Count": 15, "Data": [{"parent": [], "title": "Page 0", "url": "http://web.engr.oregonstate.edu/~olsoeric/CS419/QVis/0.html", "rightSibling": null, "firstChild": 1, "sibling": [], "child": [1, 2, 3], "leftSibling": null, "ID": 0}, {"parent": [0], "title": "Page E", "url": "http://web.engr.oregonstate.edu/~olsoeric/CS419/QVis/E.html", "rightSibling": 2, "firstChild": 4, "sibling": [2, 3], "child": [4, 5], "leftSibling": null, "ID": 1}, {"parent": [0], "title": "Page F", "url": "http://web.engr.oregonstate.edu/~olsoeric/CS419/QVis/F.html", "rightSibling": 3, "firstChild": null, "sibling": [1, 3], "child": [], "leftSibling": 1, "ID": 2}, {"parent": [0], "title": "Page N", "url": "http://web.engr.oregonstate.edu/~olsoeric/CS419/QVis/N.html", "rightSibling": null, "firstChild": 6, "sibling": [1, 2], "child": [6, 7], "leftSibling": 2, "ID": 3}, {"parent": [1], "title": "Page A", "url": "http://web.engr.oregonstate.edu/~olsoeric/CS419/QVis/A.html", "rightSibling": 5, "firstChild": null, "sibling": [5], "child": [], "leftSibling": null, "ID": 4}, {"parent": [1], "title": "Page D", "url": "http://web.engr.oregonstate.edu/~olsoeric/CS419/QVis/D.html", "rightSibling": null, "firstChild": 8, "sibling": [4], "child": [8, 9], "leftSibling": 4, "ID": 5}, {"parent": [3], "title": "Page G", "url": "http://web.engr.oregonstate.edu/~olsoeric/CS419/QVis/G.html", "rightSibling": 7, "firstChild": null, "sibling": [7], "child": [], "leftSibling": null, "ID": 6}, {"parent": [3], "title": "Page M", "url": "http://web.engr.oregonstate.edu/~olsoeric/CS419/QVis/M.html", "rightSibling": null, "firstChild": 10, "sibling": [6], "child": [10, 11, 12, 13, 14], "leftSibling": 6, "ID": 7}, {"parent": [5], "title": "Page B", "url": "http://web.engr.oregonstate.edu/~olsoeric/CS419/QVis/B.html", "rightSibling": 9, "firstChild": null, "sibling": [9], "child": [], "leftSibling": null, "ID": 8}, {"parent": [5], "title": "Page C", "url": "http://web.engr.oregonstate.edu/~olsoeric/CS419/QVis/C.html", "rightSibling": null, "firstChild": null, "sibling": [8], "child": [], "leftSibling": 8, "ID": 9}, {"parent": [7], "title": "Page H", "url": "http://web.engr.oregonstate.edu/~olsoeric/CS419/QVis/H.html", "rightSibling": 11, "firstChild": null, "sibling": [11, 12, 13, 14], "child": [], "leftSibling": null, "ID": 10}, {"parent": [7], "title": "Page I", "url": "http://web.engr.oregonstate.edu/~olsoeric/CS419/QVis/I.html", "rightSibling": 12, "firstChild": null, "sibling": [10, 12, 13, 14], "child": [], "leftSibling": 10, "ID": 11}, {"parent": [7], "title": "Page J", "url": "http://web.engr.oregonstate.edu/~olsoeric/CS419/QVis/J.html", "rightSibling": 13, "firstChild": null, "sibling": [10, 11, 13, 14], "child": [], "leftSibling": 11, "ID": 12}, {"parent": [7], "title": "Page K", "url": "http://web.engr.oregonstate.edu/~olsoeric/CS419/QVis/K.html", "rightSibling": 14, "firstChild": null, "sibling": [10, 11, 12, 14], "child": [], "leftSibling": 12, "ID": 13}, {"parent": [7], "title": "Page L", "url": "http://web.engr.oregonstate.edu/~olsoeric/CS419/QVis/L.html", "rightSibling": null, "firstChild": null, "sibling": [10, 11, 12, 13], "child": [], "leftSibling": 13, "ID": 14}], "Result": 0, "Termination": false}';
+    let testTree = new TreeSpace();
+    let response = JSON.parse(testResponse);
+    testTree.loadTreeNodes(response);
     testTree.positionTree();
+    console.log(testTree.nodes)
     testTree.inOrderTree(testTree.nodes[0]);
-    // //testTree.collapse(testTree.nodes[5]);
+    //testTree.collapse(testTree.nodes[5]);
 
-    for (var j = 0; j < testTree.nodes.length; j++) {
+    for (let j = 0; j < testTree.nodes.length; j++) {
         console.log(testTree.orderedNodes[j].toString());
     }
-    return testTree.orderedNodes;
+
+}
+
+function sortedTree(treeData) {
+    let testResponse = treeData;
+    let testTree = new TreeSpace();
+    let response = JSON.parse(testResponse);
+
+    testTree.loadTreeNodes(response);
+    testTree.nodes.sort((a, b) => {
+        if (a.id > b.id) {
+            return 1;
+        }
+        else {
+            return -1;
+        }
+    })
+    testTree.positionTree();
+
+    console.log(testTree.nodes)
+    testTree.inOrderTree(testTree.nodes[0]); //Must be parent node!
+    //testTree.collapse(testTree.nodes[5]);
+
+    testTree.orderedNodes.sort((a, b) => {
+        if (a.id > b.id) {
+            return 1;
+        }
+        return -1;
+    })
+
+
+    let includedIds = [];
+    let finalArr = [];
+    for (let i = 0; i < testTree.orderedNodes.length; i++) {
+        if (!includedIds.includes(testTree.orderedNodes[i].id)) {
+            includedIds.push(testTree.orderedNodes[i].id);
+            finalArr.push(testTree.orderedNodes[i]);
+        }
+    }
+
+    console.log(finalArr);
+    for (let j = 0; j < finalArr.length; j++) {
+        console.log(finalArr[j].toString());
+    }
+
+    return finalArr;
 }
 
 
+//exports.initialTest = initialTest;
 exports.sortedTree = sortedTree;
 
 exports.TreeSpace = TreeSpace;

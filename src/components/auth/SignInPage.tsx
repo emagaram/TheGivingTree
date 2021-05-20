@@ -12,7 +12,6 @@ export default function SignInPage() {
     const { login }: any = useAuth();
     const history = useHistory();
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-
         event.preventDefault();
         try {
             setError('');
@@ -25,7 +24,7 @@ export default function SignInPage() {
         }
         setLoading(false)
 
-        console.log(event);
+        console.log(email + password);
     }
     return (
         <div className="container">
@@ -35,14 +34,14 @@ export default function SignInPage() {
                     <label htmlFor="email">Email</label>
                     <input type="email" id="email" onChange={(e) => {
                         setEmail(e.target.value)
-                        console.log(e.target.value + " " + password);
+                        console.log("email: " + e.target.value);
                     }} />
                 </div>
                 <div className="input-field">
                     <label htmlFor="password">Password</label>
                     <input type="password" id="password" onChange={(e) => {
                         setPassword(e.target.value);
-                        console.log(email + " " + e.target.value);
+                        console.log("password: " + e.target.value);
                     }} />
                 </div>
                 <div className="input-field">
