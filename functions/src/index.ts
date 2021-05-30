@@ -6,6 +6,20 @@ import * as admin from "firebase-admin"
 admin.initializeApp()
 /* eslint-disable no-debugger, no-console */
 
+const increment = admin.firestore.FieldValue.increment(1)
+
+//Will change once JustGiving is integrated
+
+export const onUserCreate = functions.auth.user().onCreate(async (user) => {
+  await admin.firestore().collection("UserData").add({
+    display_name: "dn",
+    display_photo: "address",
+    user_id: "getUID",
+    date_joined: "getDateInConsistentTimezone",
+  })
+})
+
+//Make this a transaction at some point to avoid race conditions!
 export const addDonation = functions.https.onCall(async (data, context) => {
   let count: number = 0
   try {
@@ -37,9 +51,7 @@ export const addDonation = functions.https.onCall(async (data, context) => {
         display_name: data.display_name,
       })
     functions.logger.info("Added donation")
-    await docRef.set({
-      count: ++count,
-    })
+    docRef.update({ count: increment })
     return { a: "added successfully" }
   } catch (error) {
     functions.logger.info("Error adding donation")
