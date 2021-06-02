@@ -11,15 +11,28 @@ const increment = admin.firestore.FieldValue.increment(1)
 //Will change once JustGiving is integrated
 
 export const onUserCreate = functions.auth.user().onCreate(async (user) => {
+  let count: number = 0
+  let userCountRef = admin.firestore().collection("UserCount").doc("count")
+  const doc = await userCountRef.get()
+  if (doc.exists) {
+    let data: any = doc.data()
+    if (data.count !== null) {
+      count = data.count
+    }
+  } else {
+    await userCountRef.set({
+      count: count,
+    })
+  }
   await admin.firestore().collection("UserData").add({
     display_name: "dn",
     display_photo: "address",
-    user_id: "getUID",
+    user_count: count,
     date_joined: "getDateInConsistentTimezone",
   })
+  userCountRef.update({ count: increment })
 })
 
-//Make this a transaction at some point to avoid race conditions!
 export const addDonation = functions.https.onCall(async (data, context) => {
   let count: number = 0
   try {
@@ -39,11 +52,16 @@ export const addDonation = functions.https.onCall(async (data, context) => {
     }
     functions.logger.info("data")
     functions.logger.info(data)
+
+    //Create function to get userData based on credentials, then get count_id
+    let amount: number = data.amount
+    let charity: string = data.charity
+
     await admin
       .firestore()
-      .collection("Donations")
+      .collection("Donations") //Change to PublicNodeData
       .add({
-        amount: data.amount,
+        amount: data.amount, //In future ensure amount, charity data is accurate
         charity: data.charity,
         parent_id: data.parent_id,
         donor_id: count,
@@ -58,7 +76,7 @@ export const addDonation = functions.https.onCall(async (data, context) => {
     return { a: "did not add" }
   }
 })
-async function getDonations() {
+async function getPublicNodeData() {
   const donations: any[] = []
   await admin
     .firestore()
@@ -76,7 +94,7 @@ async function findDonationLayer(id: number): Promise<number> {
   //need to check if parent exists!
 
   functions.logger.info("dnations")
-  let donations: any[] = await getDonations()
+  let donations: any[] = await getPublicNodeData()
   functions.logger.info(donations)
   for (let i = 0; i < donations.length; i++) {
     functions.logger.info("made to loop")
